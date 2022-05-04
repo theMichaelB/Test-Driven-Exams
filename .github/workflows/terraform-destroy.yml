@@ -1,12 +1,9 @@
-name: 'Terraform'
+name: 'Terraform Destroy'
 
 on:
   workflow_dispatch:
     branches:
     - main
-  push:
-    branches:
-  pull_request:
 
 jobs:
   terraform:
@@ -53,7 +50,7 @@ jobs:
         tf_actions_subcommand: 'init'
         tf_actions_working_dir: "./terraform/azure"
 
-    - name: 'Terraform Validate'
+    - name: 'Terraform Destroy'
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: latest
