@@ -68,7 +68,6 @@ jobs:
         tf_actions_working_dir: "./terraform/azure"  
 
     - name: Terraform Taint Kubernetes
-      if: ${{ github.event.inputs.Kubernetes == true }}
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: latest
@@ -78,7 +77,6 @@ jobs:
           args: 'azurerm_linux_virtual_machine_scale_set.kubernetes'
 
     - name: Terraform Taint Ansible
-      if: ${{ github.event.inputs.Ansible == true }}
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: latest
