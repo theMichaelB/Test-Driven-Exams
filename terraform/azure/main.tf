@@ -144,11 +144,11 @@ data "template_file" "init" {
   template = file("ansible/cloud-init-ansible.yaml")
   vars = {
     ssh_key     = data.azurerm_key_vault_secret.sshkey1.value
-    kubeworker  = base64encode(file("ansible/group_vars/kubeworker.yml"))
-    kubemaster  = base64encode(file("ansible/group_vars/kubemaster.yml"))
-    kubedeploy  = base64encode(file("ansible/kubedeploy.yml"))
-    azure_rm    = base64encode(file("ansible/azure_rm.yml"))
-    ansible_cfg = base64encode(file("ansible/ansible.cfg"))
+    kubeworker  = base64gzip(file("ansible/group_vars/kubeworker.yml"))
+    kubemaster  = base64gzip(file("ansible/group_vars/kubemaster.yml"))
+    kubedeploy  = base64gzip(file("ansible/kubedeploy.yml"))
+    azure_rm    = base64gzip(file("ansible/azure_rm.yml"))
+    ansible_cfg = base64gzip(file("ansible/ansible.cfg"))
   }
 }
 
