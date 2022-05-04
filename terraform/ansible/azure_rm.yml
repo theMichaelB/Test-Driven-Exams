@@ -1,0 +1,9 @@
+plugin: azure_rm
+include_vmss_resource_groups:
+  - TDE-Core-Kubernetes
+
+auth_source: auto
+
+conditional_groups:
+  kubemaster: "'kubernetes-vmss_0' in name"
+  kubeworker: "'kubernetes-vmss_0' not in name"

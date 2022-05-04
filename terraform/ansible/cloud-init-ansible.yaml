@@ -1,0 +1,41 @@
+#cloud-config
+
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - ansible
+  - python3-pip
+
+#cloud-config
+write_files:
+
+- encoding: gz+base64
+  path: /ansible/ansible.cfg
+  content: ${ansible_cfg}
+- encoding: gz+base64
+  content: ${azure_rm}
+  path: /ansible/azure_rm.yml
+- encoding: gz+base64
+  content: ${kubedeploy}
+  path: /ansible/kubedeploy.yml 
+- encoding: base64
+  content: ${kubemaster}
+  path: /ansible/group_vars/kubemaster.yml
+- encoding: base64
+  content: ${kubeworker}
+  path: /ansible/group_vars/kubeworker.yml
+- encoding: base64
+  content: ${ssh_key}
+  path: /ansible/tde.key
+
+
+
+runcmd:
+  - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+  - ansible-galaxy collection install azure.azcollection
+  - pip install -r /root/.ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
+  - az login --identity > /home/ubuntu/login.txt 
+  - cd /ansible/;chmod 400 tde.key; ansible-inventory --graph > /ansible/graph.txt && ansible all -m ping > ping.txt
+  - cd /ansible/; ansible-playbook kubedeploy.yml 
