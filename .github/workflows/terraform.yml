@@ -20,7 +20,7 @@ jobs:
       KUBERNETES_SSH_PUBLIC_KEY: ${{ secrets.KUBERNETES_SSH_PUBLIC_KEY }}
       ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
 
-      
+
     runs-on: ubuntu-latest
     environment: production
 
@@ -40,3 +40,17 @@ jobs:
         tf_actions_version: latest
         tf_actions_subcommand: 'fmt'
         tf_actions_working_dir: "./terraform/azure"
+
+    - name: 'Terraform Init'
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+        tf_actions_subcommand: 'init'
+        tf_actions_working_dir: "./terraform/azure"
+
+    - name: 'Terraform Validate'
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+        tf_actions_subcommand: 'validate'
+        tf_actions_working_dir: "./terraform/azure"  
