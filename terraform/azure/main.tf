@@ -148,7 +148,7 @@ data "template_file" "init" {
     kubemaster  = base64encode(file("ansible/group_vars/kubemaster.yml"))
     kubedeploy  = base64encode(file("ansible/kubedeploy.yml"))
     azure_rm    = base64encode(file("ansible/azure_rm.yml"))
-    ansible_cfg = base64encode(file("ansible/group_vars/ansible.cfg"))
+    ansible_cfg = base64encode(file("ansible/ansible.cfg"))
   }
 }
 
