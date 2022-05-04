@@ -5,73 +5,24 @@ on:
     branches:
     - main
     inputs:
-      Taint:
-        description: 'Taint Resource'     
+      logLevel:
+        description: 'Log level'     
         required: true
-        default: 'azurerm_linux_virtual_machine.ansible' 
+        default: 'warning' 
         type: choice
         options:
-        - azurerm_linux_virtual_machine.ansible
-        - azurerm_linux_virtual_machine_scale_set.kubernetes
-
+        - info
+        - warning
+        - debug 
 jobs:
-  terraform:
-    name: 'Terraform'
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-      ANSIBLE_SSH_PUBLIC_KEY: ${{ secrets.ANSIBLE_SSH_PUBLIC_KEY }}
-      KEY_VAULT_ID: ${{ secrets.KEY_VAULT_ID }}
-      KEY_VAULT_SSHKEY_ID: ${{ secrets.KEY_VAULT_SSHKEY_ID }}
-      KUBERNETES_SSH_PUBLIC_KEY: ${{ secrets.KUBERNETES_SSH_PUBLIC_KEY }}
-      STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT_NAME }}
-      ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
-
-
+  log-the-inputs:
     runs-on: ubuntu-latest
-    environment: Azure-Deploy
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: create tfvars
-      run: ./terraform/azure/create_vars.sh 
-
-    - name: 'Terraform Format'
-      uses: hashicorp/terraform-github-actions@master
-      with:
-        tf_actions_version: latest
-        tf_actions_subcommand: 'fmt'
-        tf_actions_working_dir: "./terraform/azure"
-
-    - name: 'Terraform Init'
-      uses: hashicorp/terraform-github-actions@master
-      with:
-        tf_actions_version: latest
-        tf_actions_subcommand: 'init'
-        tf_actions_working_dir: "./terraform/azure"
-
-    - name: 'Terraform Validate'
-      uses: hashicorp/terraform-github-actions@master
-      with:
-        tf_actions_version: latest
-        tf_actions_subcommand: 'validate'
-        tf_actions_working_dir: "./terraform/azure"  
-
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main'
-      uses: hashicorp/terraform-github-actions@master
-      with:
-        tf_actions_version: latest
-          tf_actions_subcommand: 'taint'
-          tf_actions_working_dir: '.'
-          tf_actions_comment: true
-          args: ${{ github.event.inputs.Taint }}
+      - run: |
+          echo "Log level: $LEVEL"
+          echo "Tags: $TAGS"
+          echo "Environment: $ENVIRONMENT"
+        env:
+          LEVEL: ${{ github.event.inputs.logLevel }}
+          TAGS: ${{ github.event.inputs.tags }}
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
