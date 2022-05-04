@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat > terraform.tfvars << EOF
+cat > terraform/azure/terraform.tfvars << EOF
 ansible_ssh_username   = "ubuntu"
 ansible_ssh_public_key = "${ANSIBLE_SSH_PUBLIC_KEY}"
 key_vault_sshkey_id    = "${KEY_VAULT_SSHKEY_ID}"
@@ -11,8 +11,3 @@ kubernetes_ssh_username   = "ubuntu"
 
 EOF
 
-pwd
-
-ls -al 
-
-cat terraform.tfvars
