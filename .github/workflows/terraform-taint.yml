@@ -1,32 +1,88 @@
 name: 'Terraform Taint'
-#
-on: 
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning' 
-        type: choice
-        options:
-        - info
-        - warning
-        - azurerm_linux_virtual_machine.ansible 
 
 on:
   workflow_dispatch:
     branches:
     - main
+    inputs:
+      Kubernetes:
+        description: 'Taint Kubernetes'     
+        required: true
+        type: boolean
+
+      Ansible:
+        description: 'Taint Ansible'     
+        required: true
+        type: boolean        
 
 jobs:
-  log-the-inputs:
+  terraform:
+    name: 'Terraform'
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+      ANSIBLE_SSH_PUBLIC_KEY: ${{ secrets.ANSIBLE_SSH_PUBLIC_KEY }}
+      KEY_VAULT_ID: ${{ secrets.KEY_VAULT_ID }}
+      KEY_VAULT_SSHKEY_ID: ${{ secrets.KEY_VAULT_SSHKEY_ID }}
+      KUBERNETES_SSH_PUBLIC_KEY: ${{ secrets.KUBERNETES_SSH_PUBLIC_KEY }}
+      STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT_NAME }}
+      ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+
+
     runs-on: ubuntu-latest
+    environment: Azure-Deploy
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
     steps:
-      - run: |
-          echo "Log level: $LEVEL"
-          echo "Tags: $TAGS"
-          echo "Environment: $ENVIRONMENT"
-        env:
-          LEVEL: ${{ github.event.inputs.logLevel }}
-          TAGS: ${{ github.event.inputs.tags }}
-          ENVIRONMENT: ${{ github.event.inputs.environment }}
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: create tfvars
+      run: ./terraform/azure/create_vars.sh 
+
+    - name: 'Terraform Format'
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+        tf_actions_subcommand: 'fmt'
+        tf_actions_working_dir: "./terraform/azure"
+
+    - name: 'Terraform Init'
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+        tf_actions_subcommand: 'init'
+        tf_actions_working_dir: "./terraform/azure"
+
+    - name: 'Terraform Validate'
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+        tf_actions_subcommand: 'validate'
+        tf_actions_working_dir: "./terraform/azure"  
+
+    - name: Terraform Taint Kubernetes
+      if: ${{ github.event.inputs.Kubernetes }}
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+          tf_actions_subcommand: 'taint'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+          args: "azurerm_linux_virtual_machine_scale_set.kubernetes"
+
+    - name: Terraform Taint Ansible
+      if: ${{ github.event.inputs.Ansible }}
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+          tf_actions_subcommand: 'taint'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+          args: "azurerm_linux_virtual_machine.ansible"
