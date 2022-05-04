@@ -10,10 +10,6 @@ on:
         required: true
         type: boolean
 
-      Ansible:
-        description: 'Taint Ansible'     
-        required: true
-        type: boolean        
 
 jobs:
   terraform:
@@ -66,23 +62,3 @@ jobs:
         tf_actions_version: latest
         tf_actions_subcommand: 'validate'
         tf_actions_working_dir: "./terraform/azure"  
-
-    - name: Terraform Taint Kubernetes
-      if: ${{ github.event.inputs.Kubernetes }}
-      uses: hashicorp/terraform-github-actions@master
-      with:
-        tf_actions_version: latest
-          tf_actions_subcommand: 'taint'
-          tf_actions_working_dir: '.'
-          tf_actions_comment: true
-          args: "azurerm_linux_virtual_machine_scale_set.kubernetes"
-
-    - name: Terraform Taint Ansible
-      if: ${{ github.event.inputs.Ansible }}
-      uses: hashicorp/terraform-github-actions@master
-      with:
-        tf_actions_version: latest
-          tf_actions_subcommand: 'taint'
-          tf_actions_working_dir: '.'
-          tf_actions_comment: true
-          args: "azurerm_linux_virtual_machine.ansible"
