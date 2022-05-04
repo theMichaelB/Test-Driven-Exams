@@ -11,8 +11,8 @@ on:
         default: 'azurerm_linux_virtual_machine.ansible' 
         type: choice
         options:
-        - "azurerm_linux_virtual_machine.ansible"
-        - "azurerm_linux_virtual_machine_scale_set.kubernetes"
+        - azurerm_linux_virtual_machine.ansible
+        - azurerm_linux_virtual_machine_scale_set.kubernetes
 
 jobs:
   terraform:
