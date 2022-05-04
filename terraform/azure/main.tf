@@ -123,10 +123,6 @@ resource "azurerm_public_ip" "ansible-pip" {
 
 }
 
-data "template_file" "user_data" {
-  template = base64encode(file("cloud-init-ansible.yaml"))
-}
-
 resource "azurerm_user_assigned_identity" "ansible_identity" {
   resource_group_name = azurerm_resource_group.ansible.name
   location            = azurerm_resource_group.ansible.location
@@ -145,14 +141,14 @@ data "azurerm_key_vault_secret" "sshkey1" {
 }
 
 data "template_file" "init" {
-  template = file("cloud-init-ansible.yaml")
+  template = file("ansible/cloud-init-ansible.yaml")
   vars = {
     ssh_key     = data.azurerm_key_vault_secret.sshkey1.value
-    kubeworker  = base64encode(file("../ansible/group_vars/kubeworker.yml"))
-    kubemaster  = base64encode(file("../ansible/group_vars/kubemaster.yml"))
-    kubedeploy  = base64encode(file("../ansible/kubedeploy.yml"))
-    azure_rm    = base64encode(file("../ansible/azure_rm.yml"))
-    ansible_cfg = base64encode(file("../ansible/group_vars/ansible.cfg"))
+    kubeworker  = base64encode(file("ansible/group_vars/kubeworker.yml"))
+    kubemaster  = base64encode(file("ansible/group_vars/kubemaster.yml"))
+    kubedeploy  = base64encode(file("ansible/kubedeploy.yml"))
+    azure_rm    = base64encode(file("ansible/azure_rm.yml"))
+    ansible_cfg = base64encode(file("ansible/group_vars/ansible.cfg"))
   }
 }
 
