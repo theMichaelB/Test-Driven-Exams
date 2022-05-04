@@ -26,7 +26,7 @@ write_files:
 - encoding: gz+base64
   content: ${kubeworker}
   path: /ansible/group_vars/kubeworker.yml
-- encoding: gz+base64
+- encoding: base64
   content: ${ssh_key}
   path: /ansible/tde.key
 
