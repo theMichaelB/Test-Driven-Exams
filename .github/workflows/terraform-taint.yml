@@ -16,6 +16,12 @@ on:
         type: boolean        
 
 jobs:
+  printInputs:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo "Kubernetes: ${{ github.event.inputs.Kubernetes }}"
+        echo "Ansible: ${{ github.event.inputs.Ansible }}" 
   terraform:
     name: 'Terraform'
     env:
@@ -68,7 +74,7 @@ jobs:
         tf_actions_working_dir: "./terraform/azure"  
 
     - name: Terraform Taint Kubernetes
-      if: ${{ github.event.inputs.Kubernetes == true }}
+      if: ${{ github.event.inputs.Kubernetes }}
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: latest
@@ -78,7 +84,7 @@ jobs:
         args: 'azurerm_linux_virtual_machine_scale_set.kubernetes'
 
     - name: Terraform Taint Ansible
-      if: ${{ github.event.inputs.Ansible == true }}
+      if: ${{ github.event.inputs.Ansible }}
       uses: hashicorp/terraform-github-actions@master
       with:
         tf_actions_version: latest
