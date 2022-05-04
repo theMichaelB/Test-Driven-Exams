@@ -16,8 +16,6 @@ on:
         type: boolean        
 
 jobs:
-  printInputs:
-    runs-on: ubuntu-latest
     steps:
     - run: |
         echo "Kubernetes: ${{ github.event.inputs.Kubernetes }}"
@@ -46,6 +44,10 @@ jobs:
         shell: bash
 
     steps:
+    - name: "var check"
+      run: |
+        echo "Kubernetes: ${{ github.event.inputs.Kubernetes }}"
+        echo "Ansible: ${{ github.event.inputs.Ansible }}" 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
