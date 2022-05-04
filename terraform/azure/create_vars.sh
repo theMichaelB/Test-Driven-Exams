@@ -10,3 +10,9 @@ kubernetes_ssh_public_key = "${KUBERNETES_SSH_PUBLIC_KEY}"
 kubernetes_ssh_username   = "ubuntu"
 
 EOF
+
+pwd
+
+ls -al 
+
+cat terraform.tfvars
