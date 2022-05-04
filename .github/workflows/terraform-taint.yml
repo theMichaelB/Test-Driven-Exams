@@ -1,9 +1,7 @@
 name: 'Terraform Taint'
-
-on:
+#
+on: 
   workflow_dispatch:
-    branches:
-    - main
     inputs:
       logLevel:
         description: 'Log level'     
@@ -13,7 +11,13 @@ on:
         options:
         - info
         - warning
-        - debug 
+        - azurerm_linux_virtual_machine.ansible 
+
+on:
+  workflow_dispatch:
+    branches:
+    - main
+
 jobs:
   log-the-inputs:
     runs-on: ubuntu-latest
