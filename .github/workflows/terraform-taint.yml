@@ -16,10 +16,6 @@ on:
         type: boolean        
 
 jobs:
-    steps:
-    - run: |
-        echo "Kubernetes: ${{ github.event.inputs.Kubernetes }}"
-        echo "Ansible: ${{ github.event.inputs.Ansible }}" 
   terraform:
     name: 'Terraform'
     env:
