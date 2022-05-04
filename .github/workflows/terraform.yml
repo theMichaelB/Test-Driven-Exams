@@ -18,6 +18,7 @@ jobs:
       KEY_VAULT_ID: ${{ secrets.KEY_VAULT_ID }}
       KEY_VAULT_SSHKEY_ID: ${{ secrets.KEY_VAULT_SSHKEY_ID }}
       KUBERNETES_SSH_PUBLIC_KEY: ${{ secrets.KUBERNETES_SSH_PUBLIC_KEY }}
+      STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT_NAME }}
       ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
 
 

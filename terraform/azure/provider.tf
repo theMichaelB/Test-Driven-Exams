@@ -9,7 +9,6 @@ terraform {
     }
   }
   backend "azurerm" {
-    storage_account_name = "azureincode"
     container_name       = "terraform"
     key                  = "terraform.tfstate"
 
