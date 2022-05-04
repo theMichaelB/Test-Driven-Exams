@@ -1,17 +1,17 @@
 
 resource "azurerm_resource_group" "ansible" {
-  name      = var.ansible_resource_group_name
-  location  = var.resource_group_location
+  name     = var.ansible_resource_group_name
+  location = var.resource_group_location
 }
 
 resource "azurerm_resource_group" "network" {
-  name      = var.network_resource_group_name
-  location  = var.resource_group_location
+  name     = var.network_resource_group_name
+  location = var.resource_group_location
 }
 
 resource "azurerm_resource_group" "kubernetes" {
-  name      = var.kubernetes_resource_group_name
-  location  = var.resource_group_location
+  name     = var.kubernetes_resource_group_name
+  location = var.resource_group_location
 }
 
 
@@ -24,7 +24,7 @@ module "vnet" {
   subnet_names        = ["ansible", "kubernetes"]
 
   nsg_ids = {
-    ansible = azurerm_network_security_group.ssh.id
+    ansible    = azurerm_network_security_group.ssh.id
     kubernetes = azurerm_network_security_group.kubernetes.id
   }
 
@@ -109,7 +109,7 @@ resource "azurerm_network_interface" "ansible-nic" {
   }
   ip_configuration {
     name                          = "internal"
-    public_ip_address_id          = azurerm_public_ip.ansible-pip.id 
+    public_ip_address_id          = azurerm_public_ip.ansible-pip.id
     subnet_id                     = module.vnet.vnet_subnets[0]
     private_ip_address_allocation = "Dynamic"
   }
@@ -147,11 +147,11 @@ data "azurerm_key_vault_secret" "sshkey1" {
 data "template_file" "init" {
   template = file("cloud-init-ansible.yaml")
   vars = {
-    ssh_key = data.azurerm_key_vault_secret.sshkey1.value
-    kubeworker = base64encode(file("../ansible/group_vars/kubeworker.yml"))
-    kubemaster = base64encode(file("../ansible/group_vars/kubemaster.yml"))
-    kubedeploy = base64encode(file("../ansible/kubedeploy.yml"))
-    azure_rm = base64encode(file("../ansible/azure_rm.yml"))
+    ssh_key     = data.azurerm_key_vault_secret.sshkey1.value
+    kubeworker  = base64encode(file("../ansible/group_vars/kubeworker.yml"))
+    kubemaster  = base64encode(file("../ansible/group_vars/kubemaster.yml"))
+    kubedeploy  = base64encode(file("../ansible/kubedeploy.yml"))
+    azure_rm    = base64encode(file("../ansible/azure_rm.yml"))
     ansible_cfg = base64encode(file("../ansible/group_vars/ansible.cfg"))
   }
 }
@@ -194,10 +194,10 @@ resource "azurerm_linux_virtual_machine" "ansible" {
     offer     = "0001-com-ubuntu-server-focal"
     publisher = "Canonical"
     sku       = "20_04-lts-gen2"
-    version   = "latest"  
+    version   = "latest"
   }
   identity {
-    type     = "UserAssigned"
+    type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.ansible_identity.id]
   }
 
@@ -229,17 +229,17 @@ resource "azurerm_lb" "kubernetes" {
 }
 
 resource "azurerm_lb_backend_address_pool" "bpepool" {
-  loadbalancer_id     = azurerm_lb.kubernetes.id
-  name                = "BackEndAddressPool"
+  loadbalancer_id = azurerm_lb.kubernetes.id
+  name            = "BackEndAddressPool"
 }
 
 
 resource "azurerm_lb_probe" "kubernetes" {
-  loadbalancer_id     = azurerm_lb.kubernetes.id
-  name                = "http-probe"
-  protocol            = "Http"
-  request_path        = "/health"
-  port                = 80
+  loadbalancer_id = azurerm_lb.kubernetes.id
+  name            = "http-probe"
+  protocol        = "Http"
+  request_path    = "/health"
+  port            = 80
 }
 
 
@@ -250,7 +250,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
   sku                 = "Standard_B2s"
   instances           = 3
   admin_username      = "ubuntu"
-  overprovision       = false 
+  overprovision       = false
   tags = {
     environment = "PoC"
     purpose     = "kubernetes"
@@ -265,7 +265,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
     offer     = "0001-com-ubuntu-server-focal"
     publisher = "Canonical"
     sku       = "20_04-lts-gen2"
-    version   = "latest"  
+    version   = "latest"
   }
 
   os_disk {
@@ -278,9 +278,9 @@ resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
     primary = true
 
     ip_configuration {
-      name      = "internal"
-      primary   = true
-      subnet_id = module.vnet.vnet_subnets[1]
+      name                                   = "internal"
+      primary                                = true
+      subnet_id                              = module.vnet.vnet_subnets[1]
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
     }
   }
