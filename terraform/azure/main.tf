@@ -213,7 +213,7 @@ resource "azurerm_lb" "kubernetes-lb" {
   location            = azurerm_resource_group.kubernetes.location
   resource_group_name = azurerm_resource_group.kubernetes.name
   sku                 = "Standard"
-  
+
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
     public_ip_address_id = azurerm_public_ip.kubernetes.id
@@ -245,7 +245,6 @@ resource "azurerm_lb_rule" "http-rule" {
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
 }
-
 
 resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
   name                = "kubernetes-vmss"
