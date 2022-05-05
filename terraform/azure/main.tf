@@ -258,7 +258,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
       name                                   = "internal"
       primary                                = true
       subnet_id                              = module.vnet.vnet_subnets[1]
-      load_balancer_backend_address_pool_ids = [modeule.kubernetes-lb.azurerm_lb_backend_address_pool_id]
+      load_balancer_backend_address_pool_ids = [module.kubernetes-lb.azurerm_lb_backend_address_pool_id]
     }
   }
 }
