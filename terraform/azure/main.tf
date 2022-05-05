@@ -247,6 +247,8 @@ resource "azurerm_lb_rule" "http-rule" {
   frontend_port                  = 80
   backend_port                   = 80
   frontend_ip_configuration_name = "PublicIPAddress"
+  backend_address_pool_ids       = azurerm_lb_backend_address_pool.bpepool.id
+  probe_id                       = azurerm_lb_probe.http-rule.id
 }
 
 
