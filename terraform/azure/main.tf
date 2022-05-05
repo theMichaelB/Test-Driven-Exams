@@ -199,24 +199,51 @@ resource "azurerm_linux_virtual_machine" "ansible" {
 
 }
 
-module "kubernetes-lb" {
-  source              = "github.com/theMichaelB/terraform-azurerm-loadbalancer"
+resource "azurerm_public_ip" "kubernetes-pip" {
+  name                = "kubernetes-pip"
+  location            = azurerm_resource_group.kubernetes.location
   resource_group_name = azurerm_resource_group.kubernetes.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+
+resource "azurerm_lb" "kubernetes-lb" {
   name                = "kubernetes-lb"
-  pip_name            = "kubernetes-pip"
-  lb_sku              = "Standard"
-  pip_sku             = "Standard"
-
-
-  lb_port = {
-    http = ["80", "Tcp", "80"]
+  location            = azurerm_resource_group.kubernetes.location
+  resource_group_name = azurerm_resource_group.kubernetes.name
+  sku                 = "Standard"
+  
+  frontend_ip_configuration {
+    name                 = "PublicIPAddress"
+    public_ip_address_id = azurerm_public_ip.kubernetes.id
   }
+}
 
-  lb_probe = {
-    http = ["Tcp", "80", ""]
-  }
+resource "azurerm_lb_backend_address_pool" "bpepool" {
+  resource_group_name = azurerm_resource_group.kubernetes.name
+  loadbalancer_id     = azurerm_lb.kubernetes.id
+  name                = "BackEndAddressPool"
+}
 
-  depends_on = [azurerm_resource_group.kubernetes]
+
+resource "azurerm_lb_probe" "http-probe" {
+  resource_group_name = azurerm_resource_group.kubernetes.name
+  loadbalancer_id     = azurerm_lb.kubernetes.id
+  name                = "http-probe"
+  protocol            = "Http"
+  request_path        = "/"
+  port                = 80
+}
+
+
+resource "azurerm_lb_rule" "http-rule" {
+  loadbalancer_id                = azurerm_lb.kubernetes.id
+  name                           = "LBRule"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 80
+  frontend_ip_configuration_name = "PublicIPAddress"
 }
 
 
@@ -258,7 +285,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
       name                                   = "internal"
       primary                                = true
       subnet_id                              = module.vnet.vnet_subnets[1]
-      load_balancer_backend_address_pool_ids = [module.kubernetes-lb.azurerm_lb_backend_address_pool_id]
+      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
     }
   }
 }
