@@ -200,7 +200,7 @@ resource "azurerm_linux_virtual_machine" "ansible" {
 }
 
 module "kubernetes-lb" {
-  source              = "git@github.com:theMichaelB/terraform-azurerm-loadbalancer.git"
+  source              = "github.com/theMichaelB/terraform-azurerm-loadbalancer"
   resource_group_name = azurerm_resource_group.kubernetes.name
   name                = "kubernetes-lb"
   pip_name            = "kubernetes-pip"
