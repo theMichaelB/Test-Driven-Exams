@@ -199,43 +199,24 @@ resource "azurerm_linux_virtual_machine" "ansible" {
 
 }
 
-
-resource "azurerm_public_ip" "kubernetes" {
-  name                = "kubernetes-pip"
-  location            = azurerm_resource_group.kubernetes.location
+module "kubernetes-lb" {
+  source              = "Azure/loadbalancer/azurerm"
   resource_group_name = azurerm_resource_group.kubernetes.name
-  allocation_method   = "Static"
-
-  tags = {
-    environment = "PoC"
-    purpose     = "kubernetes"
-
-  }
-}
-
-resource "azurerm_lb" "kubernetes" {
   name                = "kubernetes-lb"
-  location            = azurerm_resource_group.kubernetes.location
-  resource_group_name = azurerm_resource_group.kubernetes.name
+  pip_name            = "kubernetes-pip"
+  lb_sku              = "Standard"
+  pip_sku             = "Standard"
 
-  frontend_ip_configuration {
-    name                 = "PublicIPAddress"
-    public_ip_address_id = azurerm_public_ip.kubernetes.id
+
+  lb_port = {
+    http = ["80", "Tcp", "80"]
   }
-}
 
-resource "azurerm_lb_backend_address_pool" "bpepool" {
-  loadbalancer_id = azurerm_lb.kubernetes.id
-  name            = "BackEndAddressPool"
-}
+  lb_probe = {
+    http = ["Tcp", "80", ""]
+  }
 
-
-resource "azurerm_lb_probe" "kubernetes" {
-  loadbalancer_id = azurerm_lb.kubernetes.id
-  name            = "http-probe"
-  protocol        = "Http"
-  request_path    = "/health"
-  port            = 80
+  depends_on = [azurerm_resource_group.kubernetes]
 }
 
 
@@ -277,7 +258,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
       name                                   = "internal"
       primary                                = true
       subnet_id                              = module.vnet.vnet_subnets[1]
-      load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.bpepool.id]
+      load_balancer_backend_address_pool_ids = [modeule.kubernetes-lb.azurerm_lb_backend_address_pool_id]
     }
   }
 }
