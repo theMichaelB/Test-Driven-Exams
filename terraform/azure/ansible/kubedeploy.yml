@@ -152,7 +152,7 @@
         chdir: $HOME
         creates: node_joined.txt
 
----
+
 - hosts: localhost
   become: yes
   tasks:
