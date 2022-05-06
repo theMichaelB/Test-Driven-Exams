@@ -244,7 +244,7 @@ resource "azurerm_lb_rule" "http-rule-https" {
   loadbalancer_id                = azurerm_lb.kubernetes.id
   name                           = "LBRule-https"
   protocol                       = "Tcp"
-  frontend_port                  = 80
+  frontend_port                  = 443
   backend_port                   = 30443
   frontend_ip_configuration_name = "PublicIPAddress"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bpepool.id]
