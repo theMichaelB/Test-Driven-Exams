@@ -237,7 +237,27 @@ resource "azurerm_lb_probe" "kubernetes" {
   name            = "http-probe"
   protocol        = "Http"
   request_path    = "/"
-  port            = 80
+  port            = 30080
+}
+
+resource "azurerm_lb_rule" "http-rule-https" {
+  loadbalancer_id                = azurerm_lb.kubernetes.id
+  name                           = "LBRule-https"
+  protocol                       = "Tcp"
+  frontend_port                  = 80
+  backend_port                   = 30443
+  frontend_ip_configuration_name = "PublicIPAddress"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bpepool.id]
+  probe_id                       = azurerm_lb_probe.kubernetes.id
+}
+
+
+resource "azurerm_lb_probe" "kubernetes-https" {
+  loadbalancer_id = azurerm_lb.kubernetes.id
+  name            = "https-probe"
+  protocol        = "Http"
+  request_path    = "/"
+  port            = 30443
 }
 
 resource "azurerm_lb_rule" "http-rule" {
@@ -245,7 +265,7 @@ resource "azurerm_lb_rule" "http-rule" {
   name                           = "LBRule"
   protocol                       = "Tcp"
   frontend_port                  = 80
-  backend_port                   = 80
+  backend_port                   = 30080
   frontend_ip_configuration_name = "PublicIPAddress"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bpepool.id]
   probe_id                       = azurerm_lb_probe.kubernetes.id
