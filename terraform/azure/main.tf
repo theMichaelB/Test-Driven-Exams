@@ -322,7 +322,7 @@ resource "azurerm_dns_a_record" "Ansible" {
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_zone_resource_group
   ttl                 = 300
-  records             = [data.azurerm_public_ip.Ansible.ip_address ]
+  records             = [data.azurerm_public_ip.Ansible.ip_address]
 }
 
 resource "azurerm_dns_a_record" "kubernetes" {
@@ -330,5 +330,5 @@ resource "azurerm_dns_a_record" "kubernetes" {
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_zone_resource_group
   ttl                 = 300
-  records             = [data.azurerm_public_ip.Ansible.ip_address ]
+  records             = [data.azurerm_public_ip.Ansible.ip_address]
 }

@@ -41,11 +41,6 @@ jobs:
         shell: bash
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: create tfvars
-      run: ./terraform/azure/create_vars.sh 
 
     - name: 'Terraform Format'
       uses: hashicorp/terraform-github-actions@master
@@ -53,6 +48,13 @@ jobs:
         tf_actions_version: latest
         tf_actions_subcommand: 'fmt'
         tf_actions_working_dir: "./terraform/azure"
+
+
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: create tfvars
+      run: ./terraform/azure/create_vars.sh 
+
 
     - name: 'Terraform Init'
       uses: hashicorp/terraform-github-actions@master
