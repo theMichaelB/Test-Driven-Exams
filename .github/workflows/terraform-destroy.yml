@@ -19,8 +19,8 @@ jobs:
       KUBERNETES_SSH_PUBLIC_KEY: ${{ secrets.KUBERNETES_SSH_PUBLIC_KEY }}
       STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT_NAME }}
       ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
-      DNS_ZONE_RESOURCE_GROUP: ${{ DNS_ZONE_RESOURCE_GROUP }}
-      DNS_ZONE_NAME: ${{ DNS_ZONE_NAME }}
+      DNS_ZONE_RESOURCE_GROUP: ${{ secrets.DNS_ZONE_RESOURCE_GROUP }}
+      DNS_ZONE_NAME: ${{ secrets.DNS_ZONE_NAME }}
 
 
     runs-on: ubuntu-latest

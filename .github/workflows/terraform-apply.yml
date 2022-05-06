@@ -4,6 +4,16 @@ on:
   workflow_dispatch:
     branches:
     - main
+    inputs:
+      Kubernetes:
+        description: 'Taint Kubernetes'     
+        required: true
+        type: boolean
+
+      Ansible:
+        description: 'Taint Ansible'     
+        required: true
+        type: boolean   
 
 jobs:
   terraform:
@@ -19,8 +29,8 @@ jobs:
       KUBERNETES_SSH_PUBLIC_KEY: ${{ secrets.KUBERNETES_SSH_PUBLIC_KEY }}
       STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT_NAME }}
       ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
-      DNS_ZONE_RESOURCE_GROUP: ${{ DNS_ZONE_RESOURCE_GROUP }}
-      DNS_ZONE_NAME: ${{ DNS_ZONE_NAME }}
+      DNS_ZONE_RESOURCE_GROUP: ${{ secrets.DNS_ZONE_RESOURCE_GROUP }}
+      DNS_ZONE_NAME: ${{ secrets.DNS_ZONE_NAME }}
 
     runs-on: ubuntu-latest
     environment: Azure-Deploy
@@ -58,7 +68,27 @@ jobs:
         tf_actions_subcommand: 'validate'
         tf_actions_working_dir: "./terraform/azure"  
 
-       
+
+    - name: Terraform Taint Kubernetes
+      if: ${{ github.event.inputs.Kubernetes == 'true' }}
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+        tf_actions_subcommand: 'taint'
+        tf_actions_working_dir: "./terraform/azure"  
+        tf_actions_comment: true
+        args: 'azurerm_linux_virtual_machine_scale_set.kubernetes'
+
+    - name: Terraform Taint Ansible
+      if: ${{ github.event.inputs.Ansible == 'true' }}
+      uses: hashicorp/terraform-github-actions@master
+      with:
+        tf_actions_version: latest
+        tf_actions_subcommand: 'taint'
+        tf_actions_working_dir: "./terraform/azure"  
+        tf_actions_comment: true
+        args: 'azurerm_linux_virtual_machine.ansible'
+               
     - name: 'Terraform Plan'
       uses: hashicorp/terraform-github-actions@master
       with:
