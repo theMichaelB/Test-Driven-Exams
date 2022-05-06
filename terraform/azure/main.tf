@@ -248,7 +248,7 @@ resource "azurerm_lb_rule" "http-rule-https" {
   backend_port                   = 30443
   frontend_ip_configuration_name = "PublicIPAddress"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.bpepool.id]
-  probe_id                       = azurerm_lb_probe.kubernetes.id
+  probe_id                       = azurerm_lb_probe.kubernetes-https.id
 }
 
 
