@@ -41,3 +41,8 @@ variable "key_vault_sshkey_id" {
 variable "key_vault_id" {
 
 }
+variable "dns_zone_name" {
+
+}
+
+variable "dns_zone_resource_group" {}
