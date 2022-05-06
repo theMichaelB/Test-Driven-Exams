@@ -255,7 +255,7 @@ resource "azurerm_lb_rule" "http-rule-https" {
 resource "azurerm_lb_probe" "kubernetes-https" {
   loadbalancer_id = azurerm_lb.kubernetes.id
   name            = "https-probe"
-  protocol        = "Http"
+  protocol        = "Https"
   request_path    = "/"
   port            = 30443
 }
