@@ -337,34 +337,14 @@ resource "azurerm_linux_virtual_machine_scale_set" "kubernetes" {
   }
 }
 
-data "azurerm_resources" "Ansible" {
-
-  type = "Microsoft.Network/publicIPAddresses"
-
-}
-data "azurerm_public_ip" "Ansible" {
-
-  name                = "ansible-pip"
-  resource_group_name = var.ansible_resource_group_name
-}
-data "azurerm_resources" "kubernetes" {
-
-  type = "Microsoft.Network/publicIPAddresses"
-
-}
-data "azurerm_public_ip" "kubernetes" {
-
-  name                = "kubernetes-pip"
-  resource_group_name = var.kubernetes_resource_group_name
-}
-
 
 resource "azurerm_dns_a_record" "Ansible" {
   name                = "ansible"
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_zone_resource_group
   ttl                 = 60
-  records             = [data.azurerm_public_ip.Ansible.ip_address]
+  records             = [azurerm_public_ip.ansible-pip.ip_address]
+  depends_on = [azurerm_linux_virtual_machine.ansible]
 }
 
 resource "azurerm_dns_a_record" "kubernetes" {
@@ -372,5 +352,6 @@ resource "azurerm_dns_a_record" "kubernetes" {
   zone_name           = var.dns_zone_name
   resource_group_name = var.dns_zone_resource_group
   ttl                 = 60
-  records             = [data.azurerm_public_ip.kubernetes.ip_address]
+  records             = [azurerm_public_ip.kubernetes.ip_address]
+  depends_on = [azurerm_linux_virtual_machine_scale_set.kubernetes]
 }
