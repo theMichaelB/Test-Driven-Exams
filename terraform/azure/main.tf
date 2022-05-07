@@ -157,9 +157,18 @@ resource "azurerm_role_assignment" "ansible_identity" {
 }
 
 
+data "azurerm_key_vault_secret" "ssh_keys" {
+  name         = var.key_vault_ssh_keys
+  key_vault_id = var.key_vault_id
+}
+
 data "azurerm_key_vault_secret" "sshkey1" {
   name         = var.key_vault_sshkey_id
   key_vault_id = var.key_vault_id
+}
+
+data "external" "json" {
+  program = ["echo", base64decode(data.azurerm_key_vault_secret.ssh_keys.value)]
 }
 
 data "template_file" "init" {
@@ -171,6 +180,14 @@ data "template_file" "init" {
     kubedeploy  = base64gzip(file("ansible/kubedeploy.yml"))
     azure_rm    = base64gzip(file("ansible/azure_rm.yml"))
     ansible_cfg = base64gzip(file("ansible/ansible.cfg"))
+    rsakey      = base64decode(data.external.json.result.rsakey)
+    rsapub      = base64decode(data.external.json.result.rsapub)
+    dsakey      = base64decode(data.external.json.result.dsakey)
+    dsapub      = base64decode(data.external.json.result.dsapub)
+    ecdsakey    = base64decode(data.external.json.result.ecdsakey)
+    ecdsapub    = base64decode(data.external.json.result.ecdsapub)
+    ed25519     = base64decode(data.external.json.result.ed25519)
+    ed25519pub  = base64decode(data.external.json.result.ed25519pub)
   }
 }
 
@@ -344,7 +361,7 @@ resource "azurerm_dns_a_record" "Ansible" {
   resource_group_name = var.dns_zone_resource_group
   ttl                 = 60
   records             = [azurerm_public_ip.ansible-pip.ip_address]
-  depends_on = [azurerm_linux_virtual_machine.ansible]
+  depends_on          = [azurerm_linux_virtual_machine.ansible]
 }
 
 resource "azurerm_dns_a_record" "kubernetes" {
@@ -353,5 +370,5 @@ resource "azurerm_dns_a_record" "kubernetes" {
   resource_group_name = var.dns_zone_resource_group
   ttl                 = 60
   records             = [azurerm_public_ip.kubernetes.ip_address]
-  depends_on = [azurerm_linux_virtual_machine_scale_set.kubernetes]
+  depends_on          = [azurerm_linux_virtual_machine_scale_set.kubernetes]
 }

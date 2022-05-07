@@ -34,6 +34,9 @@ variable "kubernetes_ssh_public_key" {
 
 }
 
+variable "key_vault_ssh_keys" {
+
+}
 variable "key_vault_sshkey_id" {
 
 }

@@ -31,6 +31,7 @@ jobs:
       ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
       DNS_ZONE_RESOURCE_GROUP: ${{ secrets.DNS_ZONE_RESOURCE_GROUP }}
       DNS_ZONE_NAME: ${{ secrets.DNS_ZONE_NAME }}
+      KEY_VAULT_SSH_KEYS: ${{ secrets.KEY_VAULT_SSH_KEYS }}
 
     runs-on: ubuntu-latest
     environment: Azure-Deploy

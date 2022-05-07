@@ -31,6 +31,23 @@ write_files:
   path: /ansible/tde.key
 
 
+ssh_keys:
+  rsa_private: |
+        ${indent(9,rsakey)}
+  rsa_public: |
+         ${indent(9,rsapub)}
+  dsa_private: |
+         ${indent(9,dsakey)}
+  dsa_public: |
+         ${indent(9,dsapub)}
+  ecdsa_private: |
+         ${indent(9,ecdsakey)}
+  ecdsa_public: |
+         ${indent(9,ecdsapub)}
+  ed25519_private: |
+         ${indent(9,ed25519)}
+  ed25519_public: |
+        ${indent(9,ed25519pub)}
 
 runcmd:
   - curl -sL https://aka.ms/InstallAzureCLIDeb | bash
