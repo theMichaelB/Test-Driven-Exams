@@ -62,7 +62,7 @@ resource "azurerm_network_security_group" "ssh" {
     source_port_range          = "*"
     destination_port_range     = "22"
     source_address_prefix      = "192.168.1.0/24"
-    destination_address_prefix = "*"
+    destination_address_prefix = "192.168.0.0/24"
   }
 
 
@@ -81,8 +81,8 @@ resource "azurerm_network_security_group" "kubernetes" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "80"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    source_address_prefix      = "192.168.0.0/24"
+    destination_address_prefix = "192.168.1.0/24"
   }
   security_rule {
     name                       = "HTTPS"
@@ -92,8 +92,8 @@ resource "azurerm_network_security_group" "kubernetes" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    source_address_prefix      = "192.168.0.0/24"
+    destination_address_prefix = "192.168.1.0/24"
   }
   security_rule {
     name                       = "HTTP-Kube"
@@ -104,7 +104,7 @@ resource "azurerm_network_security_group" "kubernetes" {
     source_port_range          = "*"
     destination_port_range     = "30080"
     source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    destination_address_prefix = "192.168.1.0/24"
   }
   security_rule {
     name                       = "HTTPS-Kube"
@@ -115,7 +115,7 @@ resource "azurerm_network_security_group" "kubernetes" {
     source_port_range          = "*"
     destination_port_range     = "30443"
     source_address_prefix      = "*"
-    destination_address_prefix = "*"
+    destination_address_prefix = "192.168.1.0/24"
   }
 
 }
